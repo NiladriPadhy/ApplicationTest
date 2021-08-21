@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="ApplicationTest.MainPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+    Title="Application Test"
+    ios:Page.UseSafeArea="true"
+    BackgroundColor="White">
+
+    <StackLayout>
+        <Frame>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Frame
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    BorderColor="Black"
+                    CornerRadius="1">
+                    <Label
+                        FontSize="36"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding RandomRow0Col0Text}"
+                        TextColor="{Binding RandomRow0Col0TextColor}"
+                        VerticalTextAlignment="Center" />
+                </Frame>
+                <Frame
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    BorderColor="Black"
+                    CornerRadius="1">
+                    <Label
+                        FontSize="36"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding RandomRow0Col1Text}"
+                        TextColor="{Binding RandomRow0Col1TextColor}"
+                        VerticalTextAlignment="Center" />
+                </Frame>
+                <Frame
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    BorderColor="Black"
+                    CornerRadius="1">
+                    <Label
+                        FontSize="36"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding RandomRow0Col2Text}"
+                        TextColor="{Binding RandomRow0Col2TextColor}"
+                        VerticalTextAlignment="Center" />
+                </Frame>
+                <Frame
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    BorderColor="Black"
+                    CornerRadius="1">
+                    <Label
+                        FontSize="36"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding RandomRow1Col0Text}"
+                        TextColor="{Binding RandomRow1Col0TextColor}"
+                        VerticalTextAlignment="Center" />
+                </Frame>
+                <Frame
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    BorderColor="Black"
+                    CornerRadius="1">
+                    <Label
+                        FontSize="36"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding RandomRow1Col1Text}"
+                        TextColor="{Binding RandomRow1Col1TextColor}"
+                        VerticalTextAlignment="Center" />
+                </Frame>
+                <Frame
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    BorderColor="Black"
+                    CornerRadius="1">
+                    <Label
+                        FontSize="36"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding RandomRow1Col2Text}"
+                        TextColor="{Binding RandomRow1Col2TextColor}"
+                        VerticalTextAlignment="Center" />
+                </Frame>
+                <Frame
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    BorderColor="Black"
+                    CornerRadius="1">
+                    <Label
+                        FontSize="36"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding RandomRow2Col0Text}"
+                        TextColor="{Binding RandomRow2Col0TextColor}"
+                        VerticalTextAlignment="Center" />
+                </Frame>
+                <Frame
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    BorderColor="Black"
+                    CornerRadius="1">
+                    <Label
+                        FontSize="36"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding RandomRow2Col2Text}"
+                        TextColor="{Binding RandomRow2Col1TextColor}"
+                        VerticalTextAlignment="Center" />
+                </Frame>
+                <Frame
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    BorderColor="Black"
+                    CornerRadius="1">
+                    <Label
+                        FontSize="36"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding RandomRow2Col2Text}"
+                        TextColor="{Binding RandomRow2Col2TextColor}"
+                        VerticalTextAlignment="Center" />
+                </Frame>
+            </Grid>
+        </Frame>
+
+        <Label LineBreakMode="WordWrap">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span
+                        FontAttributes="Bold"
+                        Text="Valid Score Cobinations: "
+                        TextColor="Black" />
+                    <Span Text="{Binding ValidScoreStr}" TextColor="Red" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+        <Label LineBreakMode="WordWrap">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span
+                        FontAttributes="Bold"
+                        Text="Horizontal Score: "
+                        TextColor="Black" />
+                    <Span Text="{Binding HorizontalScore}" TextColor="Red" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+        <Label LineBreakMode="WordWrap">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span
+                        FontAttributes="Bold"
+                        Text="Vertical Score: "
+                        TextColor="Black" />
+                    <Span Text="{Binding VerticalScore}" TextColor="Red" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+        <Label LineBreakMode="WordWrap">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span
+                        FontAttributes="Bold"
+                        Text="Diagonal Score: "
+                        TextColor="Black" />
+                    <Span Text="{Binding DiagonalScore}" TextColor="Red" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+        <Label LineBreakMode="WordWrap">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span
+                        FontAttributes="Bold"
+                        Text="Score of the Matrix: "
+                        TextColor="Black" />
+                    <Span Text="{Binding MatrixScore}" TextColor="Red" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+        <Label LineBreakMode="WordWrap">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span
+                        FontAttributes="Bold"
+                        Text="Random Wild Card Index: "
+                        TextColor="Black" />
+                    <Span Text="{Binding WildCardIndex}" TextColor="Red" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+        <Button
+            Command="{Binding RunCommand}"
+            HorizontalOptions="Center"
+            Text="Run" />
+    </StackLayout>
+
+</ContentPage>
