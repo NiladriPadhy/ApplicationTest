@@ -6,4 +6,5 @@ Completed:
 Limitations:
 1. UI Designed in a static way, with 3x3 matrix.
 2. Took time to implement, traverse matrix diagonally. So manually traversing.(strict to 3x3 matrix)
+3. Rarely Wild Character is not printing, sometimes printing more than once (UI Issue)
 
