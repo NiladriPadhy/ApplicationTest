@@ -11,12 +11,10 @@ namespace ApplicationTest
         public ICommand RunCommand { get; set; }
         private List<Color> _colorArray = new List<Color>() { Color.Blue, Color.Gray, Color.Yellow };
         private List<string> _textArray = new List<string>() { "S", "C", "M" };
-
-        private List<string> _validScores = new List<string>() { "MCS", "SCM" };
-
-        private int _wildCardCharRowIndex = 0, _wildCardCharColumnIndex = 0;
-
-        private int _scoreCount=0, _totalScore=0;
+        private List<string> _validScores = new List<string>() { "MCS", "SCM", "*CS", "M*S", "MC*", "*CM", "S*M", "SC*" };
+        private enum TYPE {HORIZONTAL, VERTICAL, DIAGONAL };
+        private int _matrixDimention = 3;
+        private int _scoreCount = 0, _totalScore = 0;
         private Random _random = new Random();
 
         public MainPageViewModel()
@@ -25,70 +23,12 @@ namespace ApplicationTest
             ValidScoreStr = string.Join(",", _validScores);
             Run();
         }
-
-        private void Run()
+        #region Properties
+        private List<List<Item>> _matrix;
+        public List<List<Item>> Matrix
         {
-            RandomRow0Col0Text = PickRandomText();
-            RandomRow0Col0TextColor = PickRandomColor();
-
-            RandomRow0Col1Text = PickRandomText();
-            RandomRow0Col1TextColor = PickRandomColor();
-
-            RandomRow0Col2Text = PickRandomText();
-            RandomRow0Col2TextColor = PickRandomColor();
-
-            RandomRow1Col0Text = PickRandomText();
-            RandomRow1Col0TextColor = PickRandomColor();
-
-            RandomRow1Col1Text = PickRandomText();
-            RandomRow1Col1TextColor = PickRandomColor();
-
-            RandomRow1Col2Text = PickRandomText();
-            RandomRow1Col2TextColor = PickRandomColor();
-
-            RandomRow2Col0Text = PickRandomText();
-            RandomRow2Col0TextColor = PickRandomColor();
-
-            RandomRow2Col1Text = PickRandomText();
-            RandomRow2Col1TextColor = PickRandomColor();
-
-            RandomRow2Col2Text = PickRandomText();
-            RandomRow2Col2TextColor = PickRandomColor();
-
-            _scoreCount = 0;
-            _totalScore = 0;
-            GetHorizontalScore();
-            GetVerticalScore();
-            GetDiagonalScore();
-            if (_scoreCount > 0)
-            {
-                MatrixScore = Math.Pow(_totalScore, _scoreCount - 1);
-            }
-            else
-            {
-                MatrixScore = 0;
-            }
-            var wildCardIndex = PickRandomWildCardIndex();
-            WildCardIndex = wildCardIndex.Item1+"," + wildCardIndex.Item2;
-
-        }
-
-        private Tuple<int,int> PickRandomWildCardIndex()
-        {
-            var randomRowIndex = _random.Next(0, _textArray.Count);
-            var randomColumnIndex = _random.Next(0, _textArray.Count);
-            return new Tuple<int,int>(randomRowIndex,randomColumnIndex);
-        }
-        private string PickRandomText()
-        {
-            var randomTextIndex = _random.Next(0, _textArray.Count);
-            return _textArray[randomTextIndex];
-        }
-
-        private Color PickRandomColor()
-        {
-            var randomColorIndex = _random.Next(0, _colorArray.Count);
-            return _colorArray[randomColorIndex];
+            get { return this._matrix; }
+            set { this.SetPropertyValue(ref this._matrix, value); }
         }
 
         private string _randomRow0Col0Text;
@@ -258,135 +198,180 @@ namespace ApplicationTest
             set { this.SetPropertyValue(ref this._wildCardIndex, value); }
         }
 
-        
+        #endregion
 
-        private void GetHorizontalScore()
+        #region Methods
+        private void Run()
         {
-            int row0Score = 0,row1Score = 0,row2Score = 0;
-            string row0TextArray = RandomRow0Col0Text + RandomRow0Col1Text + RandomRow0Col2Text;
-            List<Color> row0TextColorArray = new List<Color>() { RandomRow0Col0TextColor, RandomRow0Col1TextColor, RandomRow0Col2TextColor };
-
-            string row1TextArray = RandomRow1Col0Text + RandomRow1Col1Text + RandomRow1Col2Text ;
-            List<Color> row1TextColorArray = new List<Color>() { RandomRow1Col0TextColor, RandomRow1Col1TextColor, RandomRow1Col2TextColor };
-
-            string row2TextArray =  RandomRow2Col0Text+ RandomRow2Col1Text+ RandomRow2Col2Text;
-            List<Color> row2TextColorArray = new List<Color>() { RandomRow2Col0TextColor, RandomRow2Col1TextColor, RandomRow2Col2TextColor };
-
-            if (_validScores.Contains(row0TextArray) || _validScores.Contains(Reverse(row0TextArray))){
-                row0Score = 1;
-                if (row0TextColorArray.Distinct().Count() == row0TextColorArray.Count())
-                {
-                    row0Score = 2;
-                }
-                if (AreAllSame<Color>(row0TextColorArray))
-                {
-                    row0Score = 3;
-                }
-                _scoreCount += 1;
-                _totalScore += row0Score;
-            }
-
-            if (_validScores.Contains(row1TextArray) || _validScores.Contains(Reverse(row1TextArray)))
+            /*
+             * Re Initialze Matrix on Each Run
+             */
+            var list = new List<List<Item>>();
+            for (int i = 0; i < _matrixDimention; i++)
             {
-                row1Score = 1;
-                if (row1TextColorArray.Distinct().Count() == row1TextColorArray.Count())
+                List<Item> row = new List<Item>();
+                for (int j = 0; j < _matrixDimention; j++)
                 {
-                    row1Score = 2;
+                    Item item = new Item();
+                    item.Text = PickRandomText();
+                    item.Color = PickRandomColor();
+                    row.Add(item);
                 }
-                if (AreAllSame<Color>(row1TextColorArray))
-                {
-                    row1Score = 3;
-                }
-                _scoreCount += 1;
-                _totalScore += row1Score;
+                list.Add(row);
+                Matrix = list;
             }
 
-            if (_validScores.Contains(row2TextArray) || _validScores.Contains(Reverse(row2TextArray)))
+            /*
+             * Set Wild Card Element
+             */
+            var wildCardIndex = PickRandomWildCardIndex();
+            Item wildCardItem = new Item();
+            wildCardItem.Text = "*";
+            wildCardItem.Color = Color.Red;
+            Matrix[wildCardIndex.Item1][wildCardIndex.Item2] = wildCardItem;
+            WildCardIndex = wildCardIndex.Item1 + "," + wildCardIndex.Item2;
+            Matrix = new List<List<Item>>(Matrix);
+
+            /*
+             * Data binding with UI Layer
+             */
+            BindDataToUI();
+
+            /*
+             * Calculate Score
+             */
+
+            _scoreCount = 0;
+            _totalScore = 0;
+            GetScore(TYPE.HORIZONTAL);
+            GetScore(TYPE.VERTICAL);
+            GetDiagonalScore();
+            if (_scoreCount > 0)
             {
-                row2Score = 1;
-                if (row2TextColorArray.Distinct().Count() == row2TextColorArray.Count())
-                {
-                    row2Score = 2;
-                }
-                if (AreAllSame<Color>(row2TextColorArray))
-                {
-                    row2Score = 3;
-                }
-                _scoreCount += 1;
-                _totalScore += row2Score;
+                MatrixScore = Math.Pow(_totalScore, _scoreCount - 1);
             }
-
-            HorizontalScore = row0Score + "::" + row1Score + "::" + row2Score;
+            else
+            {
+                MatrixScore = 0;
+            }
         }
 
-        private void GetVerticalScore()
+        /*
+         *Data Binding with UI (For Testing Created Static UI with Matrix 3*3 With Grid. For dynamic matrix need to design dynamic ui.
+         */
+        private void BindDataToUI()
         {
-            int col0Score = 0, col1Score = 0, col2Score = 0;
-            string col0TextArray = RandomRow0Col0Text + RandomRow1Col0Text + RandomRow2Col0Text;
-            List<Color> col0TextColorArray = new List<Color>() { RandomRow0Col0TextColor, RandomRow1Col0TextColor, RandomRow2Col0TextColor };
+            RandomRow0Col0Text = Matrix[0][0].Text;
+            RandomRow0Col0TextColor = Matrix[0][0].Color;
 
-            string col1TextArray = RandomRow0Col1Text + RandomRow1Col1Text + RandomRow2Col1Text;
-            List<Color> col1TextColorArray = new List<Color>() { RandomRow0Col1TextColor, RandomRow1Col1TextColor, RandomRow2Col1TextColor };
+            RandomRow0Col1Text = Matrix[0][1].Text;
+            RandomRow0Col1TextColor = Matrix[0][1].Color;
 
-            string col2TextArray = RandomRow0Col2Text + RandomRow1Col2Text + RandomRow2Col2Text;
-            List<Color> col2TextColorArray = new List<Color>() { RandomRow0Col2TextColor, RandomRow1Col2TextColor, RandomRow2Col2TextColor };
+            RandomRow0Col2Text = Matrix[0][2].Text;
+            RandomRow0Col2TextColor = Matrix[0][2].Color;
 
-            if (_validScores.Contains(col0TextArray) || _validScores.Contains(Reverse(col0TextArray)))
+            RandomRow1Col0Text = Matrix[1][0].Text;
+            RandomRow1Col0TextColor = Matrix[1][0].Color;
+
+            RandomRow1Col1Text = Matrix[1][1].Text;
+            RandomRow1Col1TextColor = Matrix[1][1].Color;
+
+            RandomRow1Col2Text = Matrix[1][2].Text;
+            RandomRow1Col2TextColor = Matrix[1][2].Color;
+
+            RandomRow2Col0Text = Matrix[2][0].Text;
+            RandomRow2Col0TextColor = Matrix[2][0].Color;
+
+            RandomRow2Col1Text = Matrix[2][1].Text;
+            RandomRow2Col1TextColor = Matrix[2][1].Color;
+
+            RandomRow2Col2Text = Matrix[2][2].Text;
+            RandomRow2Col2TextColor = Matrix[2][2].Color;
+        }
+
+        /*
+         * Get Random Index for WildCard Character
+         */
+        private Tuple<int, int> PickRandomWildCardIndex()
+        {
+            var randomRowIndex = _random.Next(0, _textArray.Count);
+            var randomColumnIndex = _random.Next(0, _textArray.Count);
+            return new Tuple<int, int>(randomRowIndex, randomColumnIndex);
+        }
+
+        /*
+         * Get Random Text For Matrix Item
+         */
+        private string PickRandomText()
+        {
+            var randomTextIndex = _random.Next(0, _textArray.Count);
+            return _textArray[randomTextIndex];
+        }
+        /*
+        * Get Random Color For Matrix Item
+        */
+        private Color PickRandomColor()
+        {
+            var randomColorIndex = _random.Next(0, _colorArray.Count);
+            return _colorArray[randomColorIndex];
+        }
+
+        
+
+        private void GetScore(TYPE traverseType)
+        {
+            List<int> scores = new List<int>();
+            for (int i = 0; i < _matrixDimention; i++)
             {
-                col0Score = 1;
-                if (col0TextArray.Distinct().Count() == col0TextArray.Count())
+                scores.Add(0);
+                string textArray = "";
+                List<Color> textColorArray = new List<Color>();
+                for (int j = 0; j < _matrixDimention; j++)
                 {
-                    col0Score = 2;
+                    if (traverseType == TYPE.HORIZONTAL)
+                    {
+                        textArray += Matrix[i][j].Text;
+                        textColorArray.Add(Matrix[i][j].Color);
+                    }
+                    if (traverseType == TYPE.VERTICAL)
+                    {
+                        textArray += Matrix[j][i].Text;
+                        textColorArray.Add(Matrix[j][i].Color);
+                    }
                 }
-                if (AreAllSame<Color>(col0TextColorArray))
+                if (_validScores.Contains(textArray) || _validScores.Contains(Reverse(textArray)))
                 {
-                    col0Score = 3;
+                    scores[i] = 1;
+                    if (textColorArray.Distinct().Count() == textColorArray.Count())
+                    {
+                        scores[i] = 2;
+                    }
+                    if (AreAllSame<Color>(textColorArray))
+                    {
+                        scores[i] = 3;
+                    }
+                    _scoreCount += 1;
+                    _totalScore += scores[i];
                 }
-                _scoreCount += 1;
-                _totalScore += col0Score;
+                if (traverseType == TYPE.HORIZONTAL)
+                {
+                    HorizontalScore = string.Join<int>("::", scores);
+                }
+                else if (traverseType == TYPE.HORIZONTAL)
+                {
+                    VerticalScore = string.Join<int>("::", scores);
+                }
             }
-
-            if (_validScores.Contains(col1TextArray) || _validScores.Contains(Reverse(col1TextArray)))
-            {
-                col1Score = 1;
-                if (col1TextColorArray.Distinct().Count() == col1TextColorArray.Count())
-                {
-                    col1Score = 2;
-                }
-                if (AreAllSame<Color>(col1TextColorArray))
-                {
-                    col1Score = 3;
-                }
-                _scoreCount += 1;
-                _totalScore += col1Score;
-            }
-
-            if (_validScores.Contains(col2TextArray) || _validScores.Contains(Reverse(col2TextArray)))
-            {
-                col2Score = 1;
-                if (col2TextColorArray.Distinct().Count() == col2TextColorArray.Count())
-                {
-                    col2Score = 2;
-                }
-                if (AreAllSame<Color>(col2TextColorArray))
-                {
-                    col2Score = 3;
-                }
-                _scoreCount += 1;
-                _totalScore += col2Score;
-            }
-
-            VerticalScore = col0Score + "::" + col1Score + "::" + col2Score;
         }
 
         private void GetDiagonalScore()
         {
             int dig0Score = 0, dig1Score = 0;
-            string dig0TextArray = RandomRow0Col0Text + RandomRow1Col1Text + RandomRow2Col2Text;
-            List<Color> dig0TextColorArray = new List<Color>() { RandomRow0Col0TextColor, RandomRow1Col1TextColor, RandomRow2Col2TextColor };
+            string dig0TextArray = Matrix[0][0].Text + Matrix[1][1].Text + Matrix[2][2].Text;
+            List<Color> dig0TextColorArray = new List<Color>() { Matrix[0][0].Color, Matrix[1][1].Color, Matrix[2][2].Color };
 
-            string dig1TextArray = RandomRow0Col2Text + RandomRow1Col1Text + RandomRow2Col0Text;
-            List<Color> dig1TextColorArray = new List<Color>() { RandomRow0Col1TextColor, RandomRow1Col1TextColor, RandomRow2Col1TextColor };
+            string dig1TextArray = Matrix[0][2].Text + Matrix[1][1].Text + Matrix[2][0].Text;
+            List<Color> dig1TextColorArray = new List<Color>() { Matrix[0][2].Color, Matrix[1][1].Color, Matrix[2][0].Color };
 
             if (_validScores.Contains(dig0TextArray) || _validScores.Contains(Reverse(dig0TextArray)))
             {
@@ -401,7 +386,6 @@ namespace ApplicationTest
                 }
                 _scoreCount += 1;
                 _totalScore += dig0Score;
-
             }
 
             if (_validScores.Contains(dig1TextArray) || _validScores.Contains(Reverse(dig1TextArray)))
@@ -422,7 +406,9 @@ namespace ApplicationTest
             DiagonalScore = dig0Score + "::" + dig1Score;
         }
 
-
+        /*
+         * String Reverse
+         */
         private string Reverse(string text)
         {
             if (text == null) return null;
@@ -432,6 +418,10 @@ namespace ApplicationTest
             Array.Reverse(array);
             return new String(array);
         }
+
+        /*
+         * Check all items same in collection
+         */
         private bool AreAllSame<T>(IEnumerable<T> enumerable)
         {
             if (enumerable == null) throw new ArgumentNullException(nameof(enumerable));
@@ -455,5 +445,6 @@ namespace ApplicationTest
 
             return true;
         }
+        #endregion
     }
 }
