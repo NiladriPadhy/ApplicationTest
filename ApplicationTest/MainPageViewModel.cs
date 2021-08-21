@@ -218,7 +218,6 @@ namespace ApplicationTest
                     row.Add(item);
                 }
                 list.Add(row);
-                Matrix = list;
             }
 
             /*
@@ -228,14 +227,11 @@ namespace ApplicationTest
             Item wildCardItem = new Item();
             wildCardItem.Text = "*";
             wildCardItem.Color = Color.Red;
-            Matrix[wildCardIndex.Item1][wildCardIndex.Item2] = wildCardItem;
+            list[wildCardIndex.Item1][wildCardIndex.Item2] = wildCardItem;
             WildCardIndex = wildCardIndex.Item1 + "," + wildCardIndex.Item2;
-            Matrix = new List<List<Item>>(Matrix);
+            Matrix = list;
 
-            /*
-             * Data binding with UI Layer
-             */
-            BindDataToUI();
+            
 
             /*
              * Calculate Score
@@ -254,6 +250,11 @@ namespace ApplicationTest
             {
                 MatrixScore = 0;
             }
+
+            /*
+             * Data binding with UI Layer
+             */
+            BindDataToUI();
         }
 
         /*
