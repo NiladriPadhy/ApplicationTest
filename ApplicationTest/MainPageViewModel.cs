@@ -357,7 +357,7 @@ namespace ApplicationTest
                 {
                     HorizontalScore = string.Join<int>("::", scores);
                 }
-                else if (traverseType == TYPE.HORIZONTAL)
+                else if (traverseType == TYPE.VERTICAL)
                 {
                     VerticalScore = string.Join<int>("::", scores);
                 }
